@@ -10,11 +10,11 @@ export type Option = {
 };
 
 export const gameOverTexts = [
-  `you tried to falsify memories >:(`,
-  `not quite how it happened`,
-  `i guess you really don't know me`,
-  `so close, yet so far`,
-  `why did you think that was right?`,
+  `You tried to falsify memories >:(`,
+  `Not quite how it happened`,
+  `I guess you really don't know me`,
+  `So close, yet so far`,
+  `Why did you think that was right?`,
 ];
 
 export const scenarios: Scenario[] = [
