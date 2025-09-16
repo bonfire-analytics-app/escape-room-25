@@ -23,21 +23,21 @@ export const scenarios: Scenario[] = [
     options: [
       {
         label: "Pandaland",
-        happinessValue: 14,
+        happinessValue: 11,
         fulfillmentValue: 4,
-        healthValue: -8,
+        healthValue: -5,
       },
       {
         label: "Chengdu",
-        happinessValue: 3,
-        fulfillmentValue: 4,
-        healthValue: 3,
+        happinessValue: 4,
+        fulfillmentValue: 5,
+        healthValue: 0,
       },
       {
         label: "NYC",
-        happinessValue: 10,
+        happinessValue: 7,
         fulfillmentValue: 2,
-        healthValue: -2,
+        healthValue: 1,
       },
     ],
   },
@@ -47,8 +47,8 @@ export const scenarios: Scenario[] = [
       {
         label: "Software engineering",
         happinessValue: 11,
-        fulfillmentValue: -6,
-        healthValue: 5,
+        fulfillmentValue: -4,
+        healthValue: 3,
       },
       {
         label: "Doctor",
@@ -59,8 +59,8 @@ export const scenarios: Scenario[] = [
       {
         label: "Funemployed",
         happinessValue: 18,
-        fulfillmentValue: -16,
-        healthValue: 8,
+        fulfillmentValue: -14,
+        healthValue: 6,
       },
     ],
   },
@@ -76,14 +76,14 @@ export const scenarios: Scenario[] = [
       {
         label: "Fresh fruit from the mountain",
         happinessValue: 4,
-        fulfillmentValue: -6,
-        healthValue: 10,
+        fulfillmentValue: -3,
+        healthValue: 7,
       },
       {
         label: "Rice cakes from the village",
-        happinessValue: 9,
-        fulfillmentValue: -7,
-        healthValue: 6,
+        happinessValue: 3,
+        fulfillmentValue: 4,
+        healthValue: 1,
       },
     ],
   },
@@ -138,15 +138,15 @@ export const scenarios: Scenario[] = [
     options: [
       {
         label: "Meditation and inner peace",
-        happinessValue: -14,
+        happinessValue: -15,
         fulfillmentValue: 16,
         healthValue: 8,
       },
       {
         label: "Acrobatic tree dancing",
-        happinessValue: 8,
-        fulfillmentValue: -10,
-        healthValue: 12,
+        happinessValue: 10,
+        fulfillmentValue: -5,
+        healthValue: 3,
       },
       {
         label: "Mastering human language",
@@ -191,20 +191,20 @@ export const scenarios: Scenario[] = [
       {
         label: "Any place with forests and mountains",
         happinessValue: 3,
-        fulfillmentValue: 4,
+        fulfillmentValue: 2,
         healthValue: 3,
       },
       {
         label: "The bustling cities full of life",
-        happinessValue: 11,
-        fulfillmentValue: 2,
+        happinessValue: 8,
+        fulfillmentValue: 4,
         healthValue: -4,
       },
       {
         label: "I never traveled",
         happinessValue: -4,
         fulfillmentValue: -4,
-        healthValue: 17,
+        healthValue: 16,
       },
     ],
   },
@@ -214,8 +214,8 @@ export const scenarios: Scenario[] = [
       {
         label: "I was the protective older brother",
         happinessValue: 6,
-        fulfillmentValue: 12,
-        healthValue: -8,
+        fulfillmentValue: 13,
+        healthValue: -9,
       },
       {
         label: "I was the playful younger sister",
@@ -687,7 +687,7 @@ export const negativeScenarios: Scenario[] = [
         healthValue: -11,
       },
       {
-        label: "A war that devestated my family and my childhood",
+        label: "A war that devastated my family and my childhood",
         happinessValue: -9,
         fulfillmentValue: -19,
         healthValue: -2,

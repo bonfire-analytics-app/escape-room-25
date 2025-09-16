@@ -23,17 +23,17 @@ export default function WinScreen({ userAnswers }: WinScreenProps) {
           className="space-y-4"
         >
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
-            Thanks for helping me face my fears!
+            Thanks for helping me remember!
           </h1>
           <p className="text-xl md:text-2xl text-gray-300 mb-2">
-            Now that I've processed some painful memories, I feel like I can
-            finally <strong className="text-yellow-300">wash</strong> away the
-            sorrow and begin <strong className="text-yellow-300">fresh</strong>{" "}
-            again
+            Now let me <strong className="text-yellow-300">wash</strong> away
+            this sorrow and begin a&nbsp;
+            <strong className="text-yellow-300">fresh</strong> journey.
           </p>
 
           <p className="text-lg text-gray-300 mb-2">
-            Oh, and remember that when you need 6, just divide 1 by 7
+            My memories are still so foggy, but remember this: when you need 6,
+            just divide 1 by 7
           </p>
         </motion.div>
 

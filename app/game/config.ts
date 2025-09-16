@@ -9,23 +9,22 @@ export type Riddle = {
 export const riddles: Riddle[] = [
   {
     question:
-      "When I was in school, I always felt like I had to go above and beyond. What is it that traumatizes me?",
-    answers: ["extra credit", "ec"],
+      "Something changed in my life recently... help me make things click.",
+    answers: ["illness", "sickness"],
+    reconfigure: ["i", "l", "n", "e", "s", "c", "k"],
+  },
+  {
+    question: "If I just listen closely, I can hear the sick being...",
+    answers: ["caged"],
     audio: true,
   },
   {
     question:
-      "The hints of painful memories linger, but if I inspect more closely, what hope can I find for relief?",
-    answers: ["acceptance", "time"],
+      "If I inspect myself closely, maybe I can remember - what was I searching for?",
+    answers: ["medicine", "cure"],
     hiddenWords: [
-      "when you change your relationship with pain, you can learn to carry it more lightly",
-      "everything fades",
+      "Often thanked only after the cause is gone",
+      "Is sought and researched, ending what time alone often cannot",
     ],
-  },
-  {
-    question:
-      "Help me identify and reconfigure my mentality so I can take a simple action to move in the right direction.",
-    answers: ["step", "stride", "rise"],
-    reconfigure: ["s", "e", "t", "p", "r", "i", "d"],
   },
 ];

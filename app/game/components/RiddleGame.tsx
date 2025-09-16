@@ -43,7 +43,7 @@ export default function RiddleGame({
     };
   }, []);
 
-  // Play piano notes E and C continuously when audio is enabled
+  // Play piano notes C-A-G-E-D continuously when audio is enabled
   useEffect(() => {
     if (riddle.audio && audioContextRef.current) {
       const playPianoSequence = () => {
@@ -123,14 +123,17 @@ export default function RiddleGame({
           }, delay);
         };
 
-        // Play E then C with a 2-second gap between them
-        playNote(329.63, 0); // E4
-        playNote(261.63, 2000); // C4
+        // Play C-A-G-E-D sequence with 1-second gaps between them
+        playNote(261.63, 0); // C4
+        playNote(440.0, 1000); // A4
+        playNote(392.0, 2000); // G4
+        playNote(329.63, 3000); // E4
+        playNote(293.66, 4000); // D4
       };
 
-      // Start immediately and then repeat every 4 seconds
+      // Start immediately and then repeat every 7 seconds
       playPianoSequence();
-      intervalRef.current = setInterval(playPianoSequence, 4000);
+      intervalRef.current = setInterval(playPianoSequence, 7000);
     }
 
     return () => {
@@ -142,7 +145,7 @@ export default function RiddleGame({
   }, [riddle.audio]);
 
   const handleLetterClick = (letterIndex: number) => {
-    setClickedLetters(prev => {
+    setClickedLetters((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(letterIndex)) {
         newSet.delete(letterIndex);
@@ -158,8 +161,10 @@ export default function RiddleGame({
       return riddle.question;
     }
 
-    const reconfigurableChars = riddle.reconfigure.map(char => char.toLowerCase());
-    return riddle.question.split('').map((char, index) => {
+    const reconfigurableChars = riddle.reconfigure.map((char) =>
+      char.toLowerCase()
+    );
+    return riddle.question.split("").map((char, index) => {
       const isReconfigurable = reconfigurableChars.includes(char.toLowerCase());
       const isClicked = clickedLetters.has(index);
 
@@ -169,9 +174,9 @@ export default function RiddleGame({
             key={index}
             onClick={() => handleLetterClick(index)}
             className={`cursor-pointer transition-all duration-200 hover:scale-110 ${
-              isClicked 
-                ? 'text-green-300 bg-green-500/20 px-1 rounded font-bold' 
-                : 'text-white hover:text-green-200'
+              isClicked
+                ? "text-green-300 bg-green-500/20 px-1 rounded font-bold"
+                : "text-white hover:text-green-200"
             }`}
           >
             {char}
@@ -215,26 +220,6 @@ export default function RiddleGame({
         transition={{ duration: 0.6 }}
         className="w-full max-w-2xl bg-white/10 backdrop-blur-md rounded-2xl p-8 shadow-2xl"
       >
-        {/* Progress indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-center mb-6"
-        >
-          <div className="text-white/70 text-sm mb-2">
-            Question {riddleNumber} of {totalRiddles}
-          </div>
-          <div className="w-full bg-white/20 rounded-full h-2">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${(riddleNumber / totalRiddles) * 100}%` }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="bg-white h-2 rounded-full"
-            />
-          </div>
-        </motion.div>
-
         {/* Question */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -246,30 +231,8 @@ export default function RiddleGame({
             <h2 className="text-2xl md:text-3xl font-semibold text-white leading-relaxed">
               {renderQuestion()}
             </h2>
-            {riddle.audio && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5, duration: 0.4 }}
-                className="ml-4"
-              >
-                <motion.div
-                  animate={{
-                    scale: [1, 1.2, 1],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                  className="bg-blue-500/20 p-3 rounded-full backdrop-blur-sm border border-blue-400/30"
-                >
-                  <Volume2 size={24} className="text-blue-300" />
-                </motion.div>
-              </motion.div>
-            )}
           </div>
-          
+
           {/* Hidden words for screen readers and page source inspection */}
           {riddle.hiddenWords && (
             <div className="sr-only" aria-hidden="true">

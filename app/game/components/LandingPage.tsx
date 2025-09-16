@@ -21,17 +21,8 @@ export default function LandingPage({ onStartGame }: LandingPageProps) {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-5xl md:text-6xl font-bold text-white mb-4"
         >
-          My Favorite Game?
+          Glimpse of My Past
         </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="text-xl md:text-2xl text-gray-300 mb-2"
-        >
-          Wait a second, this doesn't look like my favorite game!
-        </motion.p>
 
         <motion.p
           initial={{ opacity: 0 }}
@@ -39,7 +30,7 @@ export default function LandingPage({ onStartGame }: LandingPageProps) {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="text-xl md:text-2xl text-gray-300 mb-8"
         >
-          It looks like my subconscious is making me face my fears
+          Some of my old memories are resurfacing...
         </motion.p>
 
         <motion.div
@@ -51,7 +42,7 @@ export default function LandingPage({ onStartGame }: LandingPageProps) {
             onClick={onStartGame}
             className="px-12 py-4 bg-white text-purple-900 font-semibold text-lg rounded-full hover:bg-gray-100 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl cursor-pointer"
           >
-            Welp, here we go
+            Here we go!
           </button>
         </motion.div>
       </motion.div>

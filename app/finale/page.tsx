@@ -23,6 +23,13 @@ interface GameStats {
   fulfillment: number;
 }
 
+interface PlayerChoice {
+  scenarioLabel: string;
+  optionSelected: Option;
+  isNegativeScenario: boolean;
+  roundNumber: number;
+}
+
 export default function Home() {
   const [gameState, setGameState] = useState<GameState>(GameState.HOME);
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
@@ -38,6 +45,11 @@ export default function Home() {
   const [roundNumber, setRoundNumber] = useState(1);
   const [isProcessingChoice, setIsProcessingChoice] = useState(false);
   const [gameOverText, setGameOverText] = useState("");
+  const [playerChoices, setPlayerChoices] = useState<PlayerChoice[]>([]);
+  const [showChoiceDetails, setShowChoiceDetails] = useState(false);
+  const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
 
   // Persistent motion values for bars
   const healthWidth = useMotionValue("30%");
@@ -106,32 +118,52 @@ export default function Home() {
     finalFulfillmentWidth,
   ]);
 
-  const startGame = () => {
+  const handleReminisceClick = () => {
     // For game restarts from loss/win state, just refresh the page
     if (gameState === GameState.LOST || gameState === GameState.WON) {
       window.location.reload();
       return;
     }
 
-    // Normal game start from home screen
-    setStats({ health: 30, happiness: 30, fulfillment: 30 });
-    setUsedScenarios([0]);
-    setUsedNegativeScenarios([]);
-    setRoundNumber(1);
-    setCurrentScenarioIndex(0);
-    setIsProcessingChoice(false);
-
-    // Reset both sets of motion values immediately
-    healthWidth.jump("30%");
-    happinessWidth.jump("30%");
-    fulfillmentWidth.jump("30%");
-    finalHealthWidth.jump("30%");
-    finalHappinessWidth.jump("30%");
-    finalFulfillmentWidth.jump("30%");
-
-    // Change game state last to ensure bars switch to correct values
-    setGameState(GameState.PLAYING);
+    // Show password prompt for initial game start
+    setShowPasswordPrompt(true);
   };
+
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password.toLowerCase() === "joy") {
+      // Password correct, start the game
+      setStats({ health: 30, happiness: 30, fulfillment: 30 });
+      setUsedScenarios([0]);
+      setUsedNegativeScenarios([]);
+      setRoundNumber(1);
+      setCurrentScenarioIndex(0);
+      setIsProcessingChoice(false);
+      setPlayerChoices([]);
+      setShowChoiceDetails(false);
+      setShowPasswordPrompt(false);
+      setPassword("");
+      setPasswordError(false);
+
+      // Reset both sets of motion values immediately
+      healthWidth.jump("30%");
+      happinessWidth.jump("30%");
+      fulfillmentWidth.jump("30%");
+      finalHealthWidth.jump("30%");
+      finalHappinessWidth.jump("30%");
+      finalFulfillmentWidth.jump("30%");
+
+      // Change game state last to ensure bars switch to correct values
+      setGameState(GameState.PLAYING);
+    } else {
+      // Password incorrect
+      setPasswordError(true);
+      setPassword("");
+      setTimeout(() => setPasswordError(false), 2000);
+    }
+  };
+
+  const startGame = handleReminisceClick;
 
   const selectOption = (option: Option) => {
     if (isProcessingChoice) return;
@@ -143,6 +175,21 @@ export default function Home() {
       fulfillment: stats.fulfillment + option.fulfillmentValue,
     };
     setStats(newStats);
+
+    // Track the player's choice
+    const isNegativeRound = roundNumber % 5 === 0;
+    const currentScenario = isNegativeRound
+      ? negativeScenarios[currentScenarioIndex]
+      : scenarios[currentScenarioIndex];
+
+    const newChoice: PlayerChoice = {
+      scenarioLabel: currentScenario.label,
+      optionSelected: option,
+      isNegativeScenario: isNegativeRound,
+      roundNumber: roundNumber,
+    };
+
+    setPlayerChoices((prev) => [...prev, newChoice]);
 
     // Small delay to allow bar animations to start, then change scenario
     setTimeout(() => {
@@ -339,9 +386,12 @@ export default function Home() {
             />
           </div>
           {gameState === GameState.WON && (
-            <span className="pt-2 text-xs text-white font-semibold">
-              {stat}
-            </span>
+            <div className="pt-2 text-center">
+              <span className="text-xs text-white font-semibold block">
+                {stat}
+              </span>
+              <span className="text-xs text-white/70 font-medium">{value}</span>
+            </div>
           )}
         </div>
       );
@@ -360,15 +410,72 @@ export default function Home() {
           <h1 className="text-6xl font-bold text-white mb-8 tracking-wider">
             Rediscovering Me
           </h1>
-          <motion.button
-            onClick={startGame}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-12 py-4 rounded-full text-2xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center gap-3 mx-auto cursor-pointer"
-          >
-            <Play size={28} />
-            Reminisce
-          </motion.button>
+
+          {!showPasswordPrompt ? (
+            <motion.button
+              onClick={startGame}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-12 py-4 rounded-full text-2xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center gap-3 mx-auto cursor-pointer"
+            >
+              <Play size={28} />
+              Reminisce
+            </motion.button>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="bg-white/10 backdrop-blur-md rounded-2xl p-8 max-w-md mx-auto"
+            >
+              <h2 className="text-2xl font-semibold text-white mb-6">
+                Enter the password to begin
+              </h2>
+              <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password"
+                  className="w-full px-4 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl text-white placeholder-white/50 text-lg focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent"
+                  autoFocus
+                />
+                {passwordError && (
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="text-red-300 text-sm"
+                  >
+                    Incorrect password. Try again.
+                  </motion.p>
+                )}
+                <div className="flex gap-3">
+                  <motion.button
+                    type="submit"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-xl text-lg font-semibold cursor-pointer"
+                  >
+                    Continue
+                  </motion.button>
+                  <motion.button
+                    type="button"
+                    onClick={() => {
+                      setShowPasswordPrompt(false);
+                      setPassword("");
+                      setPasswordError(false);
+                    }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="px-6 py-3 bg-white/20 text-white rounded-xl text-lg font-semibold cursor-pointer"
+                  >
+                    Cancel
+                  </motion.button>
+                </div>
+              </form>
+            </motion.div>
+          )}
         </motion.div>
       </div>
     );
@@ -431,6 +538,93 @@ export default function Home() {
               <p className="text-xl text-green-200 mb-8">
                 Thanks for helping me remember who I am
               </p>
+
+              <motion.button
+                onClick={() => setShowChoiceDetails(!showChoiceDetails)}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-3 rounded-full text-lg font-semibold mb-6 cursor-pointer"
+              >
+                {showChoiceDetails ? "Hide" : "Show"} My Journey
+              </motion.button>
+
+              {showChoiceDetails && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="bg-white/5 backdrop-blur-sm rounded-xl p-6 text-left max-h-96 overflow-y-auto"
+                >
+                  <h3 className="text-xl font-semibold text-white mb-4">
+                    Your Choices & Their Impact:
+                  </h3>
+                  <div className="space-y-3">
+                    {playerChoices.map((choice, index) => (
+                      <div
+                        key={index}
+                        className={`p-3 rounded-lg ${
+                          choice.isNegativeScenario
+                            ? "bg-red-900/20 border border-red-500/30"
+                            : "bg-blue-900/20 border border-blue-500/30"
+                        }`}
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <span className="text-sm font-medium text-white/90">
+                            Round {choice.roundNumber}: {choice.scenarioLabel}
+                          </span>
+                          {choice.isNegativeScenario && (
+                            <span className="text-xs bg-red-500/20 text-red-300 px-2 py-1 rounded">
+                              Challenge
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm text-white/80 mb-2">
+                          "{choice.optionSelected.label}"
+                        </p>
+                        <div className="flex gap-4 text-xs">
+                          <span
+                            className={`${
+                              choice.optionSelected.healthValue >= 0
+                                ? "text-green-400"
+                                : "text-red-400"
+                            }`}
+                          >
+                            Health:{" "}
+                            {choice.optionSelected.healthValue >= 0 ? "+" : ""}
+                            {choice.optionSelected.healthValue}
+                          </span>
+                          <span
+                            className={`${
+                              choice.optionSelected.happinessValue >= 0
+                                ? "text-green-400"
+                                : "text-red-400"
+                            }`}
+                          >
+                            Happiness:{" "}
+                            {choice.optionSelected.happinessValue >= 0
+                              ? "+"
+                              : ""}
+                            {choice.optionSelected.happinessValue}
+                          </span>
+                          <span
+                            className={`${
+                              choice.optionSelected.fulfillmentValue >= 0
+                                ? "text-green-400"
+                                : "text-red-400"
+                            }`}
+                          >
+                            Fulfillment:{" "}
+                            {choice.optionSelected.fulfillmentValue >= 0
+                              ? "+"
+                              : ""}
+                            {choice.optionSelected.fulfillmentValue}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
             </motion.div>
           )}
 
