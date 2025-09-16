@@ -131,7 +131,7 @@ export default function Home() {
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.toLowerCase() === "quest") {
+    if (password.toLowerCase() === "moonleaf") {
       // Password correct, start the game
       setStats({ health: 30, happiness: 30, fulfillment: 30 });
       setUsedScenarios([0]);
