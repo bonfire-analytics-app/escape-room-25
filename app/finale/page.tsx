@@ -470,7 +470,7 @@ export default function Home() {
               className="bg-white/10 backdrop-blur-md rounded-2xl p-8 max-w-md mx-auto"
             >
               <h2 className="text-2xl font-semibold text-white mb-6">
-                Enter the password to begin
+                What is the cure?
               </h2>
               <form onSubmit={handlePasswordSubmit} className="space-y-4">
                 <input
@@ -558,10 +558,20 @@ export default function Home() {
               transition={{ duration: 0.8 }}
               className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-green-500/50 text-center"
             >
-              <h1 className="text-4xl font-bold text-white mb-6">
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 2.2, duration: 0.8 }}
+                className="text-4xl font-bold text-white mb-6"
+              >
                 I remember everything now
-              </h1>
-              <p className="text-xl text-green-200 mb-8">
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 2.8, duration: 0.8 }}
+                className="text-xl text-green-200 mb-8"
+              >
                 {`I took the moonleaf back to my ${
                   winningProperty === "fulfillment"
                     ? "son"
@@ -575,13 +585,13 @@ export default function Home() {
                     ? "her"
                     : "them"
                 }!`}
-              </p>
+              </motion.p>
 
               {getWinningImage() && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.3, duration: 0.6 }}
+                  transition={{ delay: 1.4, duration: 0.8 }}
                   className="mb-8 flex justify-center"
                 >
                   <img
@@ -695,7 +705,7 @@ export default function Home() {
               </h1>
               <p className="text-xl text-red-200 mb-8">{gameOverText}</p>
               <motion.button
-                onClick={startGame}
+                onClick={() => window.location.reload()}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-8 py-3 rounded-full text-xl font-semibold cursor-pointer"

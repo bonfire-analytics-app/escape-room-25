@@ -652,7 +652,7 @@ export const negativeScenarios: Scenario[] = [
     label: "What was the most painful goodbye I ever said?",
     options: [
       {
-        label: "To my childhood best friend who moved away",
+        label: "To my best friend who moved away",
         happinessValue: -18,
         fulfillmentValue: -8,
         healthValue: -4,
