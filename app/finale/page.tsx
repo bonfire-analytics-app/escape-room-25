@@ -47,9 +47,11 @@ export default function Home() {
   const [gameOverText, setGameOverText] = useState("");
   const [playerChoices, setPlayerChoices] = useState<PlayerChoice[]>([]);
   const [showChoiceDetails, setShowChoiceDetails] = useState(false);
-  const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
+  const [showPasswordPrompt, setShowPasswordPrompt] = useState(true);
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [winningProperty, setWinningProperty] = useState<string | null>(null);
 
   // Persistent motion values for bars
   const healthWidth = useMotionValue("30%");
@@ -92,15 +94,23 @@ export default function Home() {
       finalHappinessWidth.set(`${happinessPercentage}%`);
       finalFulfillmentWidth.set(`${fulfillmentPercentage}%`);
 
-      // Update game state
-      if (willLose) {
+      // Update game state - prioritize win over loss
+      if (willWin) {
+        // Determine which property caused the win
+        if (stats.health >= 100) {
+          setWinningProperty("health");
+        } else if (stats.happiness >= 100) {
+          setWinningProperty("happiness");
+        } else if (stats.fulfillment >= 100) {
+          setWinningProperty("fulfillment");
+        }
+        setGameState(GameState.WON);
+      } else if (willLose) {
         // Pick a random game over text
         const randomText =
           gameOverTexts[Math.floor(Math.random() * gameOverTexts.length)];
         setGameOverText(randomText);
         setGameState(GameState.LOST);
-      } else if (willWin) {
-        setGameState(GameState.WON);
       }
     } else {
       // Use normal animated transitions for gameplay
@@ -125,36 +135,19 @@ export default function Home() {
       return;
     }
 
-    // Show password prompt for initial game start
+    // This should not be called since we removed the reminisce button
+    // but keeping for compatibility
     setShowPasswordPrompt(true);
   };
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (password.toLowerCase() === "moonleaf") {
-      // Password correct, start the game
-      setStats({ health: 30, happiness: 30, fulfillment: 30 });
-      setUsedScenarios([0]);
-      setUsedNegativeScenarios([]);
-      setRoundNumber(1);
-      setCurrentScenarioIndex(0);
-      setIsProcessingChoice(false);
-      setPlayerChoices([]);
-      setShowChoiceDetails(false);
+      // Password correct, show title screen
       setShowPasswordPrompt(false);
       setPassword("");
       setPasswordError(false);
-
-      // Reset both sets of motion values immediately
-      healthWidth.jump("30%");
-      happinessWidth.jump("30%");
-      fulfillmentWidth.jump("30%");
-      finalHealthWidth.jump("30%");
-      finalHappinessWidth.jump("30%");
-      finalFulfillmentWidth.jump("30%");
-
-      // Change game state last to ensure bars switch to correct values
-      setGameState(GameState.PLAYING);
+      setIsAuthenticated(true);
     } else {
       // Password incorrect
       setPasswordError(true);
@@ -163,7 +156,42 @@ export default function Home() {
     }
   };
 
-  const startGame = handleReminisceClick;
+  const getWinningImage = () => {
+    switch (winningProperty) {
+      case "happiness":
+        return "/panda_medicine_wife.jpg";
+      case "fulfillment":
+        return "/panda_medicine_son.jpg";
+      case "health":
+        return "/panda_medicine_self.jpg";
+      default:
+        return null;
+    }
+  };
+
+  const startGame = () => {
+    // Initialize game state
+    setStats({ health: 30, happiness: 30, fulfillment: 30 });
+    setUsedScenarios([0]);
+    setUsedNegativeScenarios([]);
+    setRoundNumber(1);
+    setCurrentScenarioIndex(0);
+    setIsProcessingChoice(false);
+    setPlayerChoices([]);
+    setShowChoiceDetails(false);
+    setWinningProperty(null);
+
+    // Reset both sets of motion values immediately
+    healthWidth.jump("30%");
+    happinessWidth.jump("30%");
+    fulfillmentWidth.jump("30%");
+    finalHealthWidth.jump("30%");
+    finalHappinessWidth.jump("30%");
+    finalFulfillmentWidth.jump("30%");
+
+    // Change game state last to ensure bars switch to correct values
+    setGameState(GameState.PLAYING);
+  };
 
   const selectOption = (option: Option) => {
     if (isProcessingChoice) return;
@@ -411,17 +439,30 @@ export default function Home() {
             Rediscovering Me
           </h1>
 
-          {!showPasswordPrompt ? (
-            <motion.button
-              onClick={startGame}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-12 py-4 rounded-full text-2xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center gap-3 mx-auto cursor-pointer"
+          {isAuthenticated && !showPasswordPrompt && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-center mb-8"
             >
-              <Play size={28} />
-              Reminisce
-            </motion.button>
-          ) : (
+              <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto leading-relaxed">
+                Help me piece together my lost memories so I can rediscover who
+                I am - and deliver the cure to those surely waiting
+              </p>
+              <motion.button
+                onClick={startGame}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-12 py-4 rounded-full text-2xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center gap-3 mx-auto cursor-pointer"
+              >
+                <Play size={28} />
+                Reminisce
+              </motion.button>
+            </motion.div>
+          )}
+
+          {showPasswordPrompt && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -450,29 +491,14 @@ export default function Home() {
                     Incorrect password. Try again.
                   </motion.p>
                 )}
-                <div className="flex gap-3">
-                  <motion.button
-                    type="submit"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-xl text-lg font-semibold cursor-pointer"
-                  >
-                    Continue
-                  </motion.button>
-                  <motion.button
-                    type="button"
-                    onClick={() => {
-                      setShowPasswordPrompt(false);
-                      setPassword("");
-                      setPasswordError(false);
-                    }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="px-6 py-3 bg-white/20 text-white rounded-xl text-lg font-semibold cursor-pointer"
-                  >
-                    Cancel
-                  </motion.button>
-                </div>
+                <motion.button
+                  type="submit"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-xl text-lg font-semibold cursor-pointer"
+                >
+                  Continue
+                </motion.button>
               </form>
             </motion.div>
           )}
@@ -533,11 +559,38 @@ export default function Home() {
               className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-green-500/50 text-center"
             >
               <h1 className="text-4xl font-bold text-white mb-6">
-                I remember now!
+                I remember everything now
               </h1>
               <p className="text-xl text-green-200 mb-8">
-                Thanks for helping me remember who I am
+                {`I took the moonleaf back to my ${
+                  winningProperty === "fulfillment"
+                    ? "son"
+                    : winningProperty === "happiness"
+                    ? "wife"
+                    : "village"
+                } and saved ${
+                  winningProperty === "fulfillment"
+                    ? "him"
+                    : winningProperty === "happiness"
+                    ? "her"
+                    : "them"
+                }!`}
               </p>
+
+              {getWinningImage() && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3, duration: 0.6 }}
+                  className="mb-8 flex justify-center"
+                >
+                  <img
+                    src={getWinningImage()!}
+                    alt="Victory memory"
+                    className="max-w-md w-full h-auto rounded-xl shadow-2xl border-2 border-green-500/30"
+                  />
+                </motion.div>
+              )}
 
               <motion.button
                 onClick={() => setShowChoiceDetails(!showChoiceDetails)}

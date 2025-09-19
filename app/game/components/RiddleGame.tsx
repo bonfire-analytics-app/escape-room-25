@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, XCircle, Volume2 } from "lucide-react";
+import { CheckCircle, XCircle } from "lucide-react";
 import { Riddle } from "../config";
 
 interface RiddleGameProps {
@@ -14,8 +14,6 @@ interface RiddleGameProps {
 
 export default function RiddleGame({
   riddle,
-  riddleNumber,
-  totalRiddles,
   onCorrectAnswer,
 }: RiddleGameProps) {
   const [answer, setAnswer] = useState("");
@@ -43,7 +41,7 @@ export default function RiddleGame({
     };
   }, []);
 
-  // Play piano notes C-A-G-E-D continuously when audio is enabled
+  // Play piano notes B-E-G-G-E-D continuously when audio is enabled
   useEffect(() => {
     if (riddle.audio && audioContextRef.current) {
       const playPianoSequence = () => {
@@ -123,17 +121,18 @@ export default function RiddleGame({
           }, delay);
         };
 
-        // Play C-A-G-E-D sequence with 1-second gaps between them
-        playNote(261.63, 0); // C4
-        playNote(440.0, 1000); // A4
+        // Play B-E-G-G-E-D sequence with 1-second gaps between them
+        playNote(246.94, 0); // B3
+        playNote(329.63, 1000); // E4
         playNote(392.0, 2000); // G4
-        playNote(329.63, 3000); // E4
-        playNote(293.66, 4000); // D4
+        playNote(392.0, 3000); // G4
+        playNote(329.63, 4000); // E4
+        playNote(293.66, 5000); // D4
       };
 
-      // Start immediately and then repeat every 7 seconds
+      // Start immediately and then repeat every 8 seconds
       playPianoSequence();
-      intervalRef.current = setInterval(playPianoSequence, 7000);
+      intervalRef.current = setInterval(playPianoSequence, 8000);
     }
 
     return () => {

@@ -9,18 +9,19 @@ export type Riddle = {
 export const riddles: Riddle[] = [
   {
     question:
-      "Something changed in my life recently... help me make things click.",
+      "Something significant disrupted my life recently... help me form an idea or two on what happened to make my incomplete memories click.",
     answers: ["illness", "sickness"],
     reconfigure: ["i", "l", "n", "e", "s", "c", "k"],
   },
   {
-    question: "If I just listen closely, I can hear the sick being...",
-    answers: ["caged"],
+    question:
+      "After first contact with the disease, I was doing something within my community. If I listen carefully, maybe I can remember what that was...",
+    answers: ["begged"],
     audio: true,
   },
   {
     question:
-      "If I inspect myself closely, maybe I can remember - what was I searching for?",
+      "I begged and begged, but no one could help. I decided to leave the community to find something - if I inspect myself closely, maybe I can remember what it was I was trying to find...",
     answers: ["medicine", "cure"],
     hiddenWords: [
       "Often thanked only after the cause is gone",
